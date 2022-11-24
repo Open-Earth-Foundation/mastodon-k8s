@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgresql
+spec:
+  selector:
+    matchLabels:
+      app: postgresql
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgresql
+        tier: backend
+    spec:
+      volumes:
+      - name: postgresql
+        persistentVolumeClaim:
+          claimName: postgresql
+      containers:
+      - name: postgresql
+        image: postgres:15-alpine
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 2G
+        volumeMounts:
+        - mountPath: "/var/lib/postgresql/data"
+          name: postgresql
+        env:
+        - name: POSTGRES_HOST_AUTH_METHOD
+          value: trust
+        ports:
+        - containerPort: 5432
