@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  selector:
+    matchLabels:
+      app: web
+      tier: frontend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: web
+        tier: frontend
+    spec:
+      volumes:
+      - name: web
+        persistentVolumeClaim:
+          claimName: web
+      containers:
+      - name: web
+        image: tootsuite/mastodon:v4.0
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1G
+        volumeMounts:
+        - mountPath: "/mastodon/public/system"
+          name: web
+        ports:
+        - containerPort: 80
